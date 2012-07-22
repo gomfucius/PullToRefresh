@@ -30,66 +30,71 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PullRefreshTableViewController.h"
 
-#define REFRESH_HEADER_HEIGHT 52.0f
-
+#define REFRESH_HEADER_HEIGHT   52.0f
+#define PULL_COLOR              [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1.f];
+#define PULL_SHADOW_COLOR       [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5f];
 
 @implementation PullRefreshTableViewController
 
 @synthesize textPull, textRelease, textLoading, refreshHeaderView, refreshLabel, refreshArrow, refreshSpinner;
 
 - (id)initWithStyle:(UITableViewStyle)style {
-  self = [super initWithStyle:style];
-  if (self != nil) {
-    [self setupStrings];
-  }
-  return self;
+    self = [super initWithStyle:style];
+    if (self != nil) {
+        [self setupStrings];
+    }
+    return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
-  self = [super initWithCoder:aDecoder];
-  if (self != nil) {
-    [self setupStrings];
-  }
-  return self;
+    self = [super initWithCoder:aDecoder];
+    if (self != nil) {
+        [self setupStrings];
+    }
+    return self;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-  if (self != nil) {
-    [self setupStrings];
-  }
-  return self;
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self != nil) {
+        [self setupStrings];
+    }
+    return self;
 }
 
 - (void)viewDidLoad {
-  [super viewDidLoad];
-  [self addPullToRefreshHeader];
+    [super viewDidLoad];
+    [self addPullToRefreshHeader];
 }
 
 - (void)setupStrings{
-  textPull = [[NSString alloc] initWithString:@"Pull down to refresh..."];
-  textRelease = [[NSString alloc] initWithString:@"Release to refresh..."];
-  textLoading = [[NSString alloc] initWithString:@"Loading..."];
+    textPull = [[NSString alloc] initWithString:NSLocalizedString(@"Keep pulling...", nil) ];
+    textRelease = [[NSString alloc] initWithString:NSLocalizedString(@"...and release!", nil)];
+    textLoading = [[NSString alloc] initWithString:NSLocalizedString(@"Loading...", nil)];
 }
 
 - (void)addPullToRefreshHeader {
+    const float nudgeY = 5.f;
     refreshHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0 - REFRESH_HEADER_HEIGHT, 320, REFRESH_HEADER_HEIGHT)];
     refreshHeaderView.backgroundColor = [UIColor clearColor];
-
-    refreshLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, REFRESH_HEADER_HEIGHT)];
+    
+    refreshLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0 + nudgeY, 320, REFRESH_HEADER_HEIGHT)];
     refreshLabel.backgroundColor = [UIColor clearColor];
-    refreshLabel.font = [UIFont boldSystemFontOfSize:12.0];
+    refreshLabel.font = [UIFont boldSystemFontOfSize:14.0];
     refreshLabel.textAlignment = UITextAlignmentCenter;
-
-    refreshArrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow.png"]];
-    refreshArrow.frame = CGRectMake(floorf((REFRESH_HEADER_HEIGHT - 27) / 2),
+    refreshLabel.textColor = PULL_COLOR;
+    refreshLabel.shadowColor = PULL_SHADOW_COLOR;
+    refreshLabel.shadowOffset = CGSizeMake(1.f, 1.f);
+    
+    refreshArrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow_pull_to_refresh.png"]];
+    refreshArrow.frame = CGRectMake(floorf((REFRESH_HEADER_HEIGHT) / 2),
                                     (floorf(REFRESH_HEADER_HEIGHT - 44) / 2),
                                     27, 44);
-
-    refreshSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    refreshSpinner.frame = CGRectMake(floorf(floorf(REFRESH_HEADER_HEIGHT - 20) / 2), floorf((REFRESH_HEADER_HEIGHT - 20) / 2), 20, 20);
+    
+    refreshSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    refreshSpinner.frame = CGRectMake(floorf(floorf(REFRESH_HEADER_HEIGHT) / 2), floorf((REFRESH_HEADER_HEIGHT - 20) / 2) + nudgeY, 20, 20);
     refreshSpinner.hidesWhenStopped = YES;
-
+    
     [refreshHeaderView addSubview:refreshLabel];
     [refreshHeaderView addSubview:refreshArrow];
     [refreshHeaderView addSubview:refreshSpinner];
@@ -172,17 +177,6 @@
     // This is just a demo. Override this method with your custom reload action.
     // Don't forget to call stopLoading at the end.
     [self performSelector:@selector(stopLoading) withObject:nil afterDelay:2.0];
-}
-
-- (void)dealloc {
-    [refreshHeaderView release];
-    [refreshLabel release];
-    [refreshArrow release];
-    [refreshSpinner release];
-    [textPull release];
-    [textRelease release];
-    [textLoading release];
-    [super dealloc];
 }
 
 @end
